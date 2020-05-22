@@ -1,90 +1,82 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Nome: Antonio Fernandes
+ * Nº estudante: 108085
+ * 3º Ano-Engenharia Informatica e de Computadores
  */
 package coloracaodegrafos;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.math.*;
 import java.util.*;
 
-/**
- *
- * @author Gabarito
- */
 public class ColoracaoDeGrafos {
     
-     public static int TestCases;
-	public static int First, Second, MinimumNumberOfWhite;
-	public static boolean[][] Matrix;
-	public static int [] Color;
-	public static int[] Chosen;
-	public static int NumberOfNodes, Edges;
+        public static int m;   //numero de grafos
+	public static int inicio, fim, no_branco;
+	public static boolean[][] Matriz;
+	public static int [] cor;
+	public static int[] sel;
+	public static int n, k;  //n->numero de nos  k->numeru das arestas
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args)throws NumberFormatException, IOException {
         // TODO code application logic here
         
        Scanner entrada = new Scanner(System.in);
 		
-		TestCases = entrada.nextInt();
-		while(TestCases-- > 0){
-			NumberOfNodes = entrada.nextInt();
-			Edges	      = entrada.nextInt();
-			Matrix  = new boolean[NumberOfNodes + 1][NumberOfNodes + 1];
+		m = entrada.nextInt();
+		while(m-- > 0){ // enquanto existir grafos
+			n = entrada.nextInt();
+			k = entrada.nextInt();
+			Matriz  = new boolean[n + 1][n + 1];
 			
-			for(int i = 0; i < Edges; i++){
-				First  = entrada.nextInt();
-				Second = entrada.nextInt();
-				Matrix[First][Second] = Matrix[Second][First] = true;
+			for(int i = 0; i < k; i++){  // ciclo para ler todas as arestas
+				inicio  = entrada.nextInt();
+				fim = entrada.nextInt();
+				Matriz[inicio][fim] = Matriz[fim][inicio] = true;
 			}
-			Color = new int[NumberOfNodes + 1];
-			MinimumNumberOfWhite = NumberOfNodes;
+			cor = new int[n + 1];
+			no_branco = n;
 			
-			Solve(1, 0);
-			System.out.println(NumberOfNodes - MinimumNumberOfWhite);
-			int CounterSpace = 0;
+			colorir(1, 0);
+			System.out.println(n - no_branco);
+			int n_espaco = 0;
 			
-			for(int i = 1; i < Chosen.length; i++){
-				if(Chosen[i] == 2){
-					if(CounterSpace != 0)
+			for(int i = 1; i < sel.length; i++){
+				if(sel[i] == 2){
+					if(n_espaco != 0)
 						System.out.print(" " + i);
 					else
 						System.out.print(i);
-					CounterSpace++;
+					n_espaco++;
 				}		
 			}
-			System.out.println();		
-			
-		}
-		
+			System.out.println();			
+		}		
 	}
 	
-	public static void Solve(int Index, int White){
-		if(Index > NumberOfNodes){
-			if(White < MinimumNumberOfWhite){
-				MinimumNumberOfWhite = White;
-				Chosen = Color.clone();
+    // Funcao recursiva que determinar cor no
+	public static void colorir(int pos, int branco){
+		if(pos > n){
+			if(branco < no_branco){
+				no_branco = branco;
+				sel = cor.clone();
 			}
 		}else{
-			boolean Black = true;
-			for(int i = 0; i < Matrix.length; i++){
-				if(Matrix[Index][i])	Black = Black && Color[i] != 2;
-			}if(Black){
-				Color[Index] = 2;
-				Solve(Index + 1, White);
-				Color[Index] = 0;
+			boolean preto = true;
+			for(int i = 0; i < Matriz.length; i++){
+				if(Matriz[pos][i])
+                                    preto = preto && cor[i] != 2;
+			}if(preto){
+				cor[pos] = 2;
+				colorir(pos + 1, branco);// chamada recursivamente
+				cor[pos] = 0;
 			}
-			Color[Index] = 1;
-			Solve(Index + 1, White + 1);
-			Color[Index] = 0;
+			cor[pos] = 1;
+			colorir(pos + 1, branco + 1); //
+			cor[pos] = 0;
 		} 
         
     }
